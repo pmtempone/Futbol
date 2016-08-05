@@ -1,0 +1,32 @@
+---
+title: "Analisis Torneo 2016"
+author: "pmtempone"
+date: "3 de agosto de 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(FactoMineR)
+
+load(FutbolArg.RData)
+```
+
+## Analisis de datos
+
+Se hace el analisis preliminar de datos del Torneo 2016
+```{r Torneo2016}
+summary(DatosPremiumArgentina2016)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
