@@ -28,9 +28,10 @@ ggpairs(datos2016,mapping = ggplot2::aes(color=J_local),columns = c("goles_conve
 #grafico de barras local vs visitante de rol id y titular
 t1 <- count(datos2016,vars = c("J_local","rol_id_rol"))
 
-p1 <- ggplot(t1,aes(x=action_type,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
+p1 <- ggplot(t1,aes(x=rol_id_rol,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
 
 t2 <- count(datos2016,vars = c("J_local","titular"))
 
-p2 <- ggplot(t2,aes(x=combined_shot_type,y=freq,fill=shot_made_flag))+geom_bar(stat="identity",position="dodge")
+p2 <- ggplot(t2,aes(x=titular,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
 
+multiplot(p1,p2)
