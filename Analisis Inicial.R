@@ -3,6 +3,7 @@ library(dplyr)
 library(plyr)
 library(reshape)
 library(GGally)
+library(lubridate)
 
 #Analisis de datos
 
@@ -35,3 +36,15 @@ t2 <- count(datos2016,vars = c("J_local","titular"))
 p2 <- ggplot(t2,aes(x=titular,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
 
 multiplot(p1,p2)
+#head(as.Date(datos2016$fecha,"%d/%m/%Y"))
+datos2016$fecha <- as.Date(datos2016$fecha,"%d/%m/%Y")
+datos2016$mes <- as.date
+l1 <- ggplot(datos2016,aes(x=fecha,y=goles_convertidos))+geom_line(stat="identity",position="dodge")
+
+#head(month(datos2016$fecha)) funcion de lubridate
+
+datp
+
+l1 <- ggplot(datos2016,aes(x=month(fecha),y=goles_convertidos))+ geom_line() +
+  xlab("") + ylab("goles convertidos")
+l1

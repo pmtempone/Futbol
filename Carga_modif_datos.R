@@ -18,3 +18,8 @@ DatosPremiumArgentina2016$team <- as.character(DatosPremiumArgentina2016$team)
 
 DatosPremiumArgentina2016$J_local <- ifelse(DatosPremiumArgentina2016$team==DatosPremiumArgentina2016$local,"L","V")
 
+ggplot(data = DatosPremiumArgentina2016, aes(x = J_local,y=disparo_afuera, fill = J_local)) + geom_boxplot()
+ggplot(data = DatosPremiumArgentina2016, aes(x = J_local,y=pase_correcto, fill = J_local)) + geom_boxplot()
+
+
+datos2016 <- DatosPremiumArgentina2016[DatosPremiumArgentina2016$team!='Argentina',]
