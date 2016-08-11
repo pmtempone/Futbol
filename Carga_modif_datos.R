@@ -2,10 +2,10 @@ library(ggplot2)
 library(FactoMineR)
 library(dplyr)
 
-DatosPremiumArgentina2013 <- read.csv("C:/Users/Pablo/Dropbox/Futbol/DatosPremiumArgentina2013.csv", sep=";")
-DatosPremiumArgentina2014 <- read.csv("C:/Users/Pablo/Dropbox/Futbol/DatosPremiumArgentina2014.csv", sep=";")
-DatosPremiumArgentina2015 <- read.csv("C:/Users/Pablo/Dropbox/Futbol/DatosPremiumArgentina2015.csv", sep=";")
-DatosPremiumArgentina2016 <- read.csv("C:/Users/Pablo/Dropbox/Futbol/DatosPremiumArgentina2016.csv", sep=";")
+DatosPremiumArgentina2013 <- read.csv("DatosPremiumArgentina2013.csv", sep=";")
+DatosPremiumArgentina2014 <- read.csv("DatosPremiumArgentina2014.csv", sep=";")
+DatosPremiumArgentina2015 <- read.csv("DatosPremiumArgentina2015.csv", sep=";")
+DatosPremiumArgentina2016 <- read.csv("DatosPremiumArgentina2016.csv", sep=";")
 
 DatosPremiumArgentina2016$rol_id_rol <- factor(DatosPremiumArgentina2016$rol_id_rol)
 
