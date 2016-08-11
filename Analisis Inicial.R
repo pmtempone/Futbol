@@ -59,3 +59,53 @@ jugadores_agr <- jugadores %>%summarise_each(funs(sum)) %>% mutate(pr_goles_conv
                                                                    pr_amarillas=(amarillas+doble_amarilla)/minutos_jugados,pr_expulsados=(doble_amarilla+rojas)/minutos_jugados,pr_pase_correcto=pase_correcto/minutos_jugados,
                                                                    pr_incorrecto=pase_incorrecto/minutos_jugados,pr_despejes=despejes/minutos_jugados,pr_quites=quites/minutos_jugados,pr_atajadas=atajadas/minutos_jugados,jugador=paste(perso_apellido,perso_nombre,sep=","))
 
+
+#archetypes of players
+
+#mat <- as.matrix(subset(dat, select = -c(Team, Name, Number, Nationality,WeakFootAccuracy, WeakFootFrequency)))
+
+rownames(matjugadores) <- NULL
+
+pcplot(matjugadores, col = col_black, las = 2)
+
+set.seed(1234)
+
+as <- stepArchetypes(matjugadores, k = 1:15)
+
+screeplot(as)
+
+a4 <- bestModel(as[[4]])
+
+parameters(a4)
+
+barplot(a4, matjugadores, percentiles = TRUE)
+
+pcplot(a4, matjugadores, data.col = col_black, atypes.col = col_pal[1:4])
+
+legend("topleft", legend = sprintf("A%s", 1:4),col = col_pal[1:4], lwd = 1, bg = "white")
+
+### Alpha coefficients:
+
+coef <- coef(a4, "alphas")
+
+pcplot(coef, col = c(NA, NA, col_black),rx = matrix(c(0, 1), ncol = 4, nrow = 2), var.label = FALSE)
+
+coef <- coef(a4, "alphas")
+
+
+#Good players:
+ 
+good_players <- function(atype, threshold) {
+     which <- which(coef(a4, "alphas")[, atype] > threshold)
+     good_coef <- coef(a4, "alphas")[which, ]
+      good_dat <- subset(jugadores_agr[which, ], select = c(jugador, team, rol_id_rol))
+      good_dat <- cbind(good_dat, good_coef)
+      good_dat <- good_dat[order(-good_coef[, atype]), ]
+      good_dat
+      }
+
+good_threshold <- 0.95
+
+players <- lapply(2:4, good_players, good_threshold)
+
+players
