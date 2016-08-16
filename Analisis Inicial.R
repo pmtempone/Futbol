@@ -26,6 +26,8 @@ p <- ggplot(dat.m) + geom_boxplot(aes(x=J_local, y=value, color=variable))
 
 p+facet_wrap( ~ variable, scales="free")
 
+(gg <- ggplotly(p))
+
 #correlaciones pases
 ggpairs(datos2016,mapping = ggplot2::aes(color=J_local),columns = c("goles_convertidos","asistencias","disparo_afuera","disparo_atajado","pase_correcto","despejes","quites"))
 
@@ -38,6 +40,8 @@ t2 <- count(datos2016,vars = c("J_local","titular"))
 
 p2 <- ggplot(t2,aes(x=titular,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
 
+(ggp2 <- ggplotly(p2))
+
 multiplot(p1,p2)
 #head(as.Date(datos2016$fecha,"%d/%m/%Y"))
 datos2016$fecha <- as.Date(datos2016$fecha,"%d/%m/%Y")
@@ -46,7 +50,7 @@ l1 <- ggplot(datos2016,aes(x=fecha,y=goles_convertidos))+geom_line(stat="identit
 
 #head(month(datos2016$fecha)) funcion de lubridate
 
-l1 <- ggplot(datos2016,aes(x=month(fecha),y=goles_convertidos))+ geom_line() +
+l1 <- ggplot(datos2016,aes(x=month(fecha),y=goles_convertidos))+ geom_point() +
   xlab("") + ylab("goles convertidos")
 l1
 
@@ -92,6 +96,7 @@ legend("topleft", legend = sprintf("A%s", 1:4),col = col_pal[1:4], lwd = 1, bg =
 coef <- coef(a4, "alphas")
 
 pcplot(coef, col = c(NA, NA, col_black),rx = matrix(c(0, 1), ncol = 4, nrow = 2), var.label = FALSE)
+
 
 coef <- coef(a4, "alphas")
 
