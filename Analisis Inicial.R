@@ -6,6 +6,7 @@ library(GGally)
 library(lubridate)
 library(SportsAnalytics)
 library(archetypes)
+library("RColorBrewer")
 
 #Analisis de datos
 
@@ -51,17 +52,19 @@ l1
 
 #datos por jugador
 
-jugadores <- datos2016 %>% select(perso_nombre,perso_apellido,rol_id_rol,team,minutos_jugados:atajada_penal)%>%group_by(perso_nombre,perso_apellido,rol_id_rol,team)
+jugadores <- datos2016 %>% select(perso_nombre.1,perso_apellido.1,rol_id_rol,team.1,minutos_jugados:atajada_penal)%>%group_by(perso_nombre.1,perso_apellido.1,rol_id_rol,team.1)
 
 jugadores_agr <- jugadores %>%summarise_each(funs(sum)) %>% mutate(pr_goles_convertidos=goles_convertidos/minutos_jugados,pr_asistencias=asistencias/minutos_jugados,
                                                                    pr_disparo_afuera=disparo_afuera/minutos_jugados,pr_disparo_atajado=disparo_atajado/minutos_jugados,
                                                                    pr_faltas=faltas/minutos_jugados,pr_faltas_recibidos=faltas_recibidas/minutos_jugados,pr_offsides=offsides/minutos_jugados,
                                                                    pr_amarillas=(amarillas+doble_amarilla)/minutos_jugados,pr_expulsados=(doble_amarilla+rojas)/minutos_jugados,pr_pase_correcto=pase_correcto/minutos_jugados,
-                                                                   pr_incorrecto=pase_incorrecto/minutos_jugados,pr_despejes=despejes/minutos_jugados,pr_quites=quites/minutos_jugados,pr_atajadas=atajadas/minutos_jugados,jugador=paste(perso_apellido,perso_nombre,sep=","))
+                                                                   pr_incorrecto=pase_incorrecto/minutos_jugados,pr_despejes=despejes/minutos_jugados,pr_quites=quites/minutos_jugados,pr_atajadas=atajadas/minutos_jugados,jugador=paste(perso_apellido.1,perso_nombre.1,sep=","))
 
 
 #archetypes of players
+col_pal <- brewer.pal(7, "Set1")
 
+col_black <- rgb(0, 0, 0, 0.2)
 #mat <- as.matrix(subset(dat, select = -c(Team, Name, Number, Nationality,WeakFootAccuracy, WeakFootFrequency)))
 
 rownames(matjugadores) <- NULL
@@ -70,7 +73,7 @@ pcplot(matjugadores, col = col_black, las = 2)
 
 set.seed(1234)
 
-as <- stepArchetypes(matjugadores, k = 1:15)
+as <- stepArchetypes(matjugadores, k = 1:14)
 
 screeplot(as)
 
@@ -93,6 +96,26 @@ pcplot(coef, col = c(NA, NA, col_black),rx = matrix(c(0, 1), ncol = 4, nrow = 2)
 coef <- coef(a4, "alphas")
 
 
+## The best player is a combination of Archetyp 1 and Archetype 2 with
+## Archetype 1 contributing more than Archetype 2:
+which <- which(coef[, 3] == 0 & coef[, 4] == 0 &
+                 coef[, 1] > 0 & coef[, 2] > 0 &
+                 coef[, 1] < coef[, 2])
+
+cbind(jugadores_agr[which, c("jugador", "team")],
+      coef[which, ])
+
+## ... in relation to player position:
+ pos <- as.character(jugadores_agr$rol_id_rol)
+
+cols <- rep("gray", length(pos))
+
+cols[pos == "Defender"] <- col_pal[1]
+
+
+pcplot(coef, col = c(NA, NA, cols),
+       rx = matrix(c(0, 1), ncol = 4, nrow = 2), var.label = FALSE)
+
 #Good players:
  
 good_players <- function(atype, threshold) {
@@ -106,6 +129,6 @@ good_players <- function(atype, threshold) {
 
 good_threshold <- 0.95
 
-players <- lapply(2:4, good_players, good_threshold)
+players <- lapply(1:4, good_players, good_threshold)
 
 players
