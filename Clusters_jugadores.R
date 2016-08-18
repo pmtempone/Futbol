@@ -16,8 +16,8 @@ library(plotly)
 #a- Realizar un análisis de cluster jerárquico explicando la clasificación obtenida y el
 #método elegido.
 
-matjugadores <- as.matrix(jugadores_agr[,c(25:38)])
-nombres <- iconv(jugadores_agr$jugador,to='ASCII//TRANSLIT') #por tildes en ubuntu
+matjugadores <- as.matrix(jugadores_agr[,c(23:36)])
+#nombres <- iconv(jugadores_agr$jugador,to='ASCII//TRANSLIT') #por tildes en ubuntu
 nombres <- jugadores_agr$jugador
 rownames(matjugadores) <- nombres
 
@@ -29,12 +29,21 @@ jug.clust.avg = as.dendrogram(hclust(d2, method = "average")) %>% set("branches_
 jug.clust.ward = as.dendrogram(hclust(d2, method = "ward.D")) %>% set("branches_lwd", 2)
 jug.dend = dendlist("Cercano" = jug.clust.sin, "Lejano" = jug.clust.com, "Promedio" = jug.clust.avg,"Ward"=jug.clust.ward)
 
-t <- corrplot(cor.dendlist(jug.dend), "pie", "lower")
-(ggt <- ggplotly(t))
+corrplot(cor.dendlist(jug.dend), "pie", "lower")
 
 plot(jug.clust.avg %>% set("branches_k_color", k=3) %>% set("branches_lwd", 2), main = "Average")
 jug3 <- cutree(jug.clust.com,3)
 jugadores_agr$clust <- factor(jug3)
+
+qplot(jugadores_agr$clust,xlab="Cluster")
+
+plot(jugadores_agr$clust)
+
+qplot()
+ggplot(jugadores_agr,aes())
+
+p1 <- ggplot(t1,aes(x=rol_id_rol,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
+
 
 Tabla <- describeBy(jugadores_agr[,c(25:38)], group = jugadores_agr$clust, mat = T)[,c("group1", "mean")]
 Tabla <- cbind(Tabla,"promedio gral"=rep(colMeans(jugadores_agr[,c(25:38)]), each = 3))
