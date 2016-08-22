@@ -1,3 +1,5 @@
+----#carga de librerias#-----
+
 library(FactoMineR)
 library(foreign)
 library(psych)
@@ -48,11 +50,11 @@ ggplot(data = DatosPremiumArgentina2016, aes(x = J_local,y=pase_correcto, fill =
 datos2016 <- DatosPremiumArgentina2016[DatosPremiumArgentina2016$team.1!
 '
 
-#unificacion de bases
+-----#unificacion de bases------
 
 Basetotal <- rbind(DatosPremiumArgentina2013,DatosPremiumArgentina2014,DatosPremiumArgentina2015,DatosPremiumArgentina2016)
 
-# correccion tipo de datos
+---#correccion tipo de datos-------
 
 Basetotal$rol_id_rol <- factor(Basetotal$rol_id_rol)
 
@@ -60,26 +62,26 @@ Basetotal$local.1 <- as.character(Basetotal$local.1)
 
 Basetotal$team.1 <- as.character(Basetotal$team.1)
 
-# creacion variable local visitante
+----# creacion variable local visitante-----
 Basetotal$J_local <- ifelse(Basetotal$team.1==Basetotal$local.1,"L","V")
 
-#se saca la seleccion y el apodo
+-----#se saca la seleccion y el apodo----
 Basetotal <- Basetotal[Basetotal$team.1!='Argentina',]
 Basetotal$perso_apodo <- NULL
 Basetotal <- Basetotal[Basetotal$rol_id_rol %in% c('1','2','3','4'),] # se sacan tecnicos y arbitros
 
 summary(Basetotal)
 
-#transformacion datos
+-----#transformacion datos----
 
 dat.m <- melt(Basetotal,id.vars='J_local', measure.vars=c("goles_convertidos","goles_encontra","asistencias","disparo_afuera","disparo_palo","disparo_atajado","penal_errado","faltas","offsides","amarillas","doble_amarilla","rojas","pase_correcto","pase_incorrecto","despejes","quites","atajadas","atajada_penal"))
 
-#multboxplot
+----#multboxplot----
 p <- ggplot(dat.m) + geom_boxplot(aes(x=J_local, y=value, color=variable))
 
 p+facet_wrap( ~ variable, scales="free")
 
-#grafico de barras local vs visitante de rol id y titular
+----#grafico de barras local vs visitante de rol id y titular-----
 t1 <- count(Basetotal,vars = c("J_local","rol_id_rol"))
 
 p1 <- ggplot(t1,aes(x=rol_id_rol,y=freq,fill=J_local))+geom_bar(stat="identity",position="dodge")
@@ -90,14 +92,14 @@ p2 <- ggplot(t2,aes(x=titular,y=freq,fill=J_local))+geom_bar(stat="identity",pos
 
 multiplot(p1,p2)
 
-#Cambio a tipo fecha
+----#Cambio a tipo fecha-----
 Basetotal$fecha <- as.Date(Basetotal$fecha,"%d/%m/%Y")
 
 l1 <- ggplot(Basetotal,aes(x=fecha,y=goles_convertidos))+geom_line()
 
 l1
 
-#datos por jugador
+----#datos por jugador----
 
 jugadores <- Basetotal %>% select(perso_nombre.1,perso_apellido.1,minutos_jugados:atajada_penal)%>%group_by(perso_nombre.1,perso_apellido.1)
 
