@@ -21,6 +21,8 @@ library(SportsAnalytics)
 library(archetypes)
 library("RColorBrewer")
 
+----#carga de sets de datos#-----
+
 DatosPremiumArgentina2013 <- read.csv("DatosPremiumArgentina2013.csv", sep=";")
 DatosPremiumArgentina2014 <- read.csv("DatosPremiumArgentina2014.csv", sep=";")
 DatosPremiumArgentina2015 <- read.csv("DatosPremiumArgentina2015.csv", sep=";")
