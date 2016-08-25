@@ -25,9 +25,9 @@ quantile(Basetotal$pase_correcto, 0.99)
 
 ----#selecting variables----
 
-p <- ggplot(Basetotal) + geom_boxplot(aes(x=titular, y=minutos_jugados, color=titular))
+sv <- ggplot(Basetotal) + geom_boxplot(aes(x=titular, y=minutos_jugados, color=titular))
 
-p
+sv
 
 ----#cross plot-----
 
