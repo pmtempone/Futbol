@@ -83,9 +83,11 @@ plot(fit, col = "lightblue")
 
 roystonTest(Y_v2[, -1])
 
+m2 <- manova(cbind(pr_goles_convertidos,pr_asistencias,pr_disparo_afuera,
+                                     pr_disparo_atajado,pr_faltas,pr_faltas_recibidos,pr_offsides,
+                                     pr_amarillas,pr_expulsados,pr_pase_correcto,pr_incorrecto,
+                                     pr_despejes,pr_quites,pr_atajadas) ~ J_local,Y_v2)
+
+summary(m2) #no son iguales las varianzas
 
 #No se satisface el supuesto de normalidad multivariada, por lo tanto no es posible hacer un análisis discriminante a menos que se encuentre una transformación que permita normalizar los datos.
-
-
-
-roystonTest(Y[, -16:-15])
