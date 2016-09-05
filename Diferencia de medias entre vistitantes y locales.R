@@ -14,10 +14,13 @@ library(multcomp)
 library("mvtnorm")
 library(ICSNP) #para hotteling
 library(Hotelling)
+suppressPackageStartupMessages(library(psych))
+library(MVN)
+
 
 ----#preparacion de datos----
 
-jugadores_Local <- Basetotal %>% dplyr::select(perso_nombre.1,perso_apellido.1,J_local,minutos_jugados:atajada_penal) %>% group_by(perso_nombre.1,perso_apellido.1,J_local)
+jugadores_Local <- Basetotal %>% mutate(jugador=paste(perso_apellido.1,perso_nombre.1,sep=","))%>% dplyr::select(jugador,J_local,minutos_jugados:atajada_penal) %>% group_by(jugador,J_local)
 
 jugadores_Local <- jugadores_Local %>%summarise_each(funs(sum)) 
 
@@ -29,7 +32,7 @@ jugadores_var <- jugadores_Local %>% mutate(pr_goles_convertidos=goles_convertid
                                           pr_disparo_afuera=disparo_afuera/minutos_jugados,pr_disparo_atajado=disparo_atajado/minutos_jugados,
                                           pr_faltas=faltas/minutos_jugados,pr_faltas_recibidos=faltas_recibidas/minutos_jugados,pr_offsides=offsides/minutos_jugados,
                                           pr_amarillas=(amarillas+doble_amarilla)/minutos_jugados,pr_expulsados=(doble_amarilla+rojas)/minutos_jugados,pr_pase_correcto=pase_correcto/minutos_jugados,
-                                          pr_incorrecto=pase_incorrecto/minutos_jugados,pr_despejes=despejes/minutos_jugados,pr_quites=quites/minutos_jugados,pr_atajadas=atajadas/minutos_jugados,jugador=paste(perso_apellido.1,perso_nombre.1,sep=","))
+                                          pr_incorrecto=pase_incorrecto/minutos_jugados,pr_despejes=despejes/minutos_jugados,pr_quites=quites/minutos_jugados,pr_atajadas=atajadas/minutos_jugados)
 
 
 
@@ -49,22 +52,20 @@ Y <- jugadores_var %>% dplyr::select(J_local,pr_goles_convertidos:pr_atajadas)
 Y$perso_nombre.1 <- NULL
 Y$perso_apellido.1 <- NULL
 
-describeBy(Y[,2:15], group = Y$J_local, mat = T)[,c("group1", "mean", "sd")]
 Y$J_local <- factor(Y$J_local)
+
+describeBy(Y[,2:15], group = Y$J_local, mat = T)[,c("group1", "mean", "sd")]
 
 #melt para hacer multiples boxplots
 
-Y_v2 <- Y %>% 
-  ungroup(c(perso_apellido.1,perso_nombre.1))
-
-Y_v2 <- as.data.frame(Y_v2)
+Y_v2 <- as.data.frame(jugadores_var[,c(2,22:35)])
 
 df.m <- melt(Y_v2,id.vars = "J_local")
 
 ggplot(data = df.m, aes(x = variable, y = value)) + geom_boxplot(aes(fill=J_local))
 
 ----#test de hotelling-----
-(m1 <- with(Y, HotellingsT2(cbind(pr_goles_convertidos,pr_asistencias,pr_disparo_afuera,
+(m1 <- with(Y_v2, HotellingsT2(cbind(pr_goles_convertidos,pr_asistencias,pr_disparo_afuera,
                                   pr_disparo_atajado,pr_faltas,pr_faltas_recibidos,pr_offsides,
                                   pr_amarillas,pr_expulsados,pr_pase_correcto,pr_incorrecto,
                                   pr_despejes,pr_quites,pr_atajadas) ~ J_local)))
@@ -78,12 +79,13 @@ fit
 plot(fit)
 plot(fit, col = "lightblue")
 
+#Normalidad multivariada (Se usa el test de Royston):'
+
+roystonTest(Y_v2[, -1])
 
 
-data(bottle.df)
-bottle.df = subset(bottle.df, Number == 1)
-bottle.df$Number = rep(1:2,c(10,10))
-bottle.df$Number = factor(bottle.df$Number)
-fit = hotelling.test(.~Number, bottle.df, perm = TRUE)
-plot(fit)
-plot(fit, col = "lightblue")
+#No se satisface el supuesto de normalidad multivariada, por lo tanto no es posible hacer un análisis discriminante a menos que se encuentre una transformación que permita normalizar los datos.
+
+
+
+roystonTest(Y[, -16:-15])
