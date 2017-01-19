@@ -38,6 +38,7 @@ vars_to_analyze=c("torneo", "team.1", "rol_id_rol","pase_correcto")
 cross_plot(data=Basetotal, str_target="titular", str_input=vars_to_analyze)
 
 
+
 #proporcion de suplentes que jugaron en relacion a los titulares
 
 prop.sup <- data.frame(rol_id_rol=c('1','2','3','4'),value=c(1.3,7.6,25.8,36.8))
