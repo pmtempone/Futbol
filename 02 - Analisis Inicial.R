@@ -152,4 +152,7 @@ my.settings <- list(
 parallelplot(matjugadores,horizontal.axis=FALSE, par.settings=my.settings)
 
 
+#grafico 1 del informe
+parallelplot(matjugadores,horizontal.axis=FALSE, scales = list(x = list(rot = 90)),col=col_black)
+
 ggparcoord(matjugadores, columns = c(1:3),scale = "centerObs")+geom_line()
