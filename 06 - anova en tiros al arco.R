@@ -119,3 +119,43 @@ boxcox(pr_disparo_afuera ~ 1,data = jugadores_grafico %>% filter(jugadores_grafi
 wilc.jugadores <- wilcox.test(jugadores_tiros$L,jugadores_tiros$V, paired = TRUE)
 
 ggplot(data = jugadores_var[jugadores_var$pr_goles_convertidos<0.08 & jugadores_var$pr_disparo_afuera<0.15,],aes(x=pr_disparo_afuera,y=pr_goles_convertidos,colour=J_local))+geom_point()
+
+
+
+---#nueva interpretacion de variable disparos afuera----
+
+
+jugadores_tiros_tot =  jugadores_var %>% dplyr::select(jugador,J_local,minutos_jugados,disparo_afuera,disparo_atajado,goles_convertidos) %>% mutate(pr_tiros=(disparo_afuera+disparo_atajado+goles_convertidos)/minutos_jugados)
+
+jugadores_tiros_tot <- jugadores_tiros_tot %>% dplyr::select(jugador,J_local,pr_tiros)
+jugadores_tiros_tot <- acast(jugadores_tiros_tot, jugador~J_local, value.var="pr_tiros")
+
+jugadores_tiros_tot <- as.data.frame(jugadores_tiros_tot)
+jugadores_tiros_tot <- jugadores_tiros_tot[complete.cases(jugadores_tiros_tot),]
+
+
+#wilcoxon signed rank test
+
+wilc.jugadores <- wilcox.test(jugadores_tiros_tot$L,jugadores_tiros_tot$V, paired = TRUE)
+
+ggplot(data = jugadores_var[jugadores_var$pr_goles_convertidos<0.08 & jugadores_var$pr_disparo_afuera<0.15,],aes(x=pr_disparo_afuera,y=pr_goles_convertidos,colour=J_local))+geom_point()
+
+
+wilc.jugadores
+
+----#graficos de densidad----
+
+ggplot() + geom_density(aes(x=L), colour="red", data=jugadores_tiros_tot) + 
+  geom_density(aes(x=V), colour="blue", data=jugadores_tiros_tot)
+
+jugadores_grafico_tot <- jugadores_var %>% dplyr::select(jugador,J_local,minutos_jugados,disparo_afuera,disparo_atajado,goles_convertidos) %>% mutate(pr_tiros=(disparo_afuera+disparo_atajado+goles_convertidos)/minutos_jugados) %>% dplyr::select(jugador,J_local,pr_tiros)
+describeBy(jugadores_grafico_tot$pr_tiros, group = jugadores_grafico_tot$J_local, mat = T)[,c("group1", "mean", "sd")]
+
+
+lista <- as.data.frame(rownames(jugadores_tiros_tot))
+jugadores_grafico <- sqldf("select * from jugadores_grafico where jugador in (select * from lista)")
+
+ggplot(jugadores_grafico_tot,aes(x=pr_tiros, fill=J_local)) + geom_density(alpha=0.25)
+
+ggplot(data=jugadores_grafico_tot,aes(x=J_local,y=pr_tiros,fill=J_local)) + geom_boxplot()
+
