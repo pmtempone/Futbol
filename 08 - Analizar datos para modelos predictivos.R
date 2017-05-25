@@ -1,4 +1,4 @@
-----#carga de librerias#----
+#----#carga de librerias#----
 
 library(funModeling)
 
@@ -23,8 +23,8 @@ summary(Basetotal)
 quantile(Basetotal$pase_correcto, 0.99)
 
 
-----#selecting variables----
-
+#----#selecting variables----
+library(ggplot2)
 sv <- ggplot(Basetotal) + geom_boxplot(aes(x=titular, y=minutos_jugados, color=titular))
 
 sv
