@@ -1,6 +1,7 @@
 #----#carga de librerias#----
 
 library(funModeling)
+library(dplyr)
 
 
 ----# data profiling----
@@ -45,16 +46,35 @@ prop.sup <- data.frame(rol_id_rol=c('1','2','3','4'),value=c(1.3,7.6,25.8,36.8))
 
 prop.sup$porcentaje <- c(prop.sup$value/sum(prop.sup$value))
 
-----#boxplot----
+#----#boxplot----
 
 plotar(data=Basetotal, str_input="minutos_jugados", str_target="titular", plot_type = "boxplot")
 
 ggplot(data = Basetotal,mapping = aes(x=rol_id_rol,y=minutos_jugados,col=rol_id_rol))+geom_boxplot()
 
 
-----#density plot----
+#----#density plot----
 
 plotar(data=Basetotal, str_input="minutos_jugados", str_target="titular", plot_type = "histdens")
 
 plotar(data=Basetotal, str_input="pase_correcto", str_target="titular", plot_type = "histdens")
 
+#----base para modelo predictivo----
+
+Basetotal$victoria_l <- ifelse(Basetotal$fixt_local_goles - Basetotal$fixt_visitante_goles>0,1,0)
+
+base_titulares <- Basetotal %>% filter(titular=='S')
+
+base_locales <- base_titulares %>% filter(J_local=='L') %>% group_by(even_id_evento) %>% 
+  summarise(loc_goles=sum(goles_convertidos),loc_asistencias=sum(asistencias),loc_disp_afuera=sum(disparo_afuera),
+            loc_disp_palo=sum(disparo_palo),loc_disp_atajado=sum(disparo_atajado),loc_penal_errado=sum(penal_errado),
+            loc_faltas=sum(faltas),loc_offsides=sum(offsides),loc_amarillas=sum(amarillas),loc_doble_ama=sum(doble_amarilla),
+            loc_despejes=sum(despejes),loc_quites=sum(quites),loc_atajadas=sum(atajadas),loc_ataj_penal=sum(atajada_penal))
+
+base_visitantes <- base_titulares %>% filter(J_local=='V') %>% group_by(even_id_evento) %>% 
+  summarise(vis_goles=sum(goles_convertidos),vis_asistencias=sum(asistencias),vis_disp_afuera=sum(disparo_afuera),
+            vis_disp_palo=sum(disparo_palo),vis_disp_atajado=sum(disparo_atajado),vis_penal_errado=sum(penal_errado),
+            vis_faltas=sum(faltas),vis_offsides=sum(offsides),vis_amarillas=sum(amarillas),vis_doble_ama=sum(doble_amarilla),
+            vis_despejes=sum(despejes),vis_quites=sum(quites),vis_atajadas=sum(atajadas),vis_ataj_penal=sum(atajada_penal))
+
+base_partido <- cbind(base_locales,base_visitantes[,2:15])
