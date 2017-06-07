@@ -65,16 +65,20 @@ Basetotal$victoria_l <- ifelse(Basetotal$fixt_local_goles - Basetotal$fixt_visit
 
 base_titulares <- Basetotal %>% filter(titular=='S')
 
-base_locales <- base_titulares %>% filter(J_local=='L') %>% group_by(even_id_evento) %>% 
+base_locales <- base_titulares %>% filter(J_local=='L') %>% group_by(even_id_evento,local.1) %>% 
   summarise(loc_goles=sum(goles_convertidos),loc_asistencias=sum(asistencias),loc_disp_afuera=sum(disparo_afuera),
             loc_disp_palo=sum(disparo_palo),loc_disp_atajado=sum(disparo_atajado),loc_penal_errado=sum(penal_errado),
             loc_faltas=sum(faltas),loc_offsides=sum(offsides),loc_amarillas=sum(amarillas),loc_doble_ama=sum(doble_amarilla),
             loc_despejes=sum(despejes),loc_quites=sum(quites),loc_atajadas=sum(atajadas),loc_ataj_penal=sum(atajada_penal))
 
-base_visitantes <- base_titulares %>% filter(J_local=='V') %>% group_by(even_id_evento) %>% 
+base_visitantes <- base_titulares %>% filter(J_local=='V') %>% group_by(even_id_evento,visitante.1) %>% 
   summarise(vis_goles=sum(goles_convertidos),vis_asistencias=sum(asistencias),vis_disp_afuera=sum(disparo_afuera),
             vis_disp_palo=sum(disparo_palo),vis_disp_atajado=sum(disparo_atajado),vis_penal_errado=sum(penal_errado),
             vis_faltas=sum(faltas),vis_offsides=sum(offsides),vis_amarillas=sum(amarillas),vis_doble_ama=sum(doble_amarilla),
             vis_despejes=sum(despejes),vis_quites=sum(quites),vis_atajadas=sum(atajadas),vis_ataj_penal=sum(atajada_penal))
 
 base_partido <- cbind(base_locales,base_visitantes[,2:15])
+
+#armado de la base para enviar
+
+
