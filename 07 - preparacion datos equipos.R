@@ -33,13 +33,13 @@ library("aplpack")
 
 options(scipen = 999)
 
-----#preparacion de set a nivel equipos----
+#----#preparacion de set a nivel equipos----
 
----#agrupar por equipo---
+#---#agrupar por equipo---
   
   #Idea_1: sumar valores y ponderarlos por 90 min. Que es la duracion de un partido.
   
-  ----#preparacion de datos----
+#----#preparacion de datos----
 
 equipos_tot <- Basetotal %>%  dplyr::select(fecha,team.1,minutos_jugados:atajada_penal) %>% group_by(fecha,team.1)
 
@@ -59,7 +59,7 @@ equipos_tot_df <- equipos_tot_df %>%  mutate(pr_goles_convertidos=goles_converti
                                              pr_amarillas=(amarillas_sum+doble_amarilla_sum)/partidos,pr_expulsados=(doble_amarilla_sum+rojas_sum)/partidos,pr_pase_correcto=pase_correcto_sum/partidos,
                                              pr_incorrecto=pase_incorrecto_sum/partidos,pr_despejes=despejes_sum/partidos,pr_quites=quites_sum/partidos,pr_atajadas=atajadas_sum/partidos)
 
-----#4.1 pca equipos-----
+#----#4.1 pca equipos-----
 
 matequipos <- as.matrix(equipos_tot_df[,c(22:35)])
 rownames(matequipos) <- equipos_tot_df$team.1
@@ -84,9 +84,9 @@ fviz_pca_var(pca.equipos, col.var="contrib") ##variables PCA con el color por co
 
 fviz_pca_ind(pca.equipos,  label="none", habillage=res.hcpc$data.clust$clust,addEllipses=TRUE, ellipse.level=0.95) #jugadores por cluster
 
-----#4.2 clusters equipos-----
+#----#4.2 clusters equipos-----
 
-----#HCLUST con 2 grupos-----
+#----#HCLUST con 2 grupos-----
 
 resequipos.hcpc = HCPC(pca.equipos)
 
@@ -105,7 +105,7 @@ fviz_pca_biplot(pca.equipos,
   theme_minimal()
 
 
------#4.3 caras de chernoff-------
+#-----#4.3 caras de chernoff-------
 
 
 

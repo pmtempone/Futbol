@@ -15,4 +15,4 @@ SELECT even_id_evento, equipo,avg(goles) OVER w as lag_goles
 FROM   base_evento_equipo
 WINDOW w AS (PARTITION BY equipo
              ORDER BY base_evento_equipo
-             ROWS BETWEEN 5 PRECEDING AND current row);
+             ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING);

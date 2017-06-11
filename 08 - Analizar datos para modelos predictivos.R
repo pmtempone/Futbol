@@ -4,7 +4,7 @@ library(funModeling)
 library(dplyr)
 
 
-----# data profiling----
+#----# data profiling----
 my_data_status=df_status(Basetotal)
 
 write.csv(my_data_status,file = "campos.csv")
@@ -30,7 +30,7 @@ sv <- ggplot(Basetotal) + geom_boxplot(aes(x=titular, y=minutos_jugados, color=t
 
 sv
 
-----#cross plot-----
+#----#cross plot-----
 
 cross_minutos=cross_plot(Basetotal, str_input="minutos_jugados", str_target="titular")
 
@@ -81,4 +81,5 @@ base_partido <- cbind(base_locales,base_visitantes[,2:15])
 
 #armado de la base para enviar
 
-
+base_modelado_locales <- base_locales[,1:2] %>% left_join(avg_equipos_eventos,by=c("even_id_evento"="even_id_evento","equipo_local"="equipo"))
+base_modelado_visitantes <- base_visitantes[,1:2] %>% left_join(avg_equipos_eventos,by=c("even_id_evento"="even_id_evento","equipo_visitante"="equipo"))
