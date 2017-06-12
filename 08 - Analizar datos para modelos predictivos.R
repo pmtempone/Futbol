@@ -83,3 +83,10 @@ base_partido <- cbind(base_locales,base_visitantes[,2:15])
 
 base_modelado_locales <- base_locales[,1:2] %>% left_join(avg_equipos_eventos,by=c("even_id_evento"="even_id_evento","equipo_local"="equipo"))
 base_modelado_visitantes <- base_visitantes[,1:2] %>% left_join(avg_equipos_eventos,by=c("even_id_evento"="even_id_evento","equipo_visitante"="equipo"))
+
+base_modelado_completa <- base_modelado_locales %>% left_join(base_modelado_visitantes,by="even_id_evento")
+
+
+base_modelado_completa <- base_modelado_completa %>% left_join(lkp_eventos[,c("even_id_evento","fixt_local_goles","fixt_visitante_goles")],by="even_id_evento")
+
+base_modelado_completa <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles>fixt_visitante_goles,1,0))
