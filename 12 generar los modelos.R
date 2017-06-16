@@ -25,7 +25,8 @@ base_modelado_completa <- base_modelado_locales %>% left_join(base_modelado_visi
 
 base_modelado_completa <- base_modelado_completa %>% left_join(lkp_eventos[,c("even_id_evento","fixt_local_goles","fixt_visitante_goles")],by="even_id_evento")
 
-base_modelado_completa <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles>fixt_visitante_goles,1,0))
+base_modelado_completa <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles>fixt_visitante_goles,"V",
+                                                                                   ifelse(fixt_local_goles<fixt_visitante_goles,"D","E")))
 
 base_modelado_completa <- base_modelado_completa[complete.cases(base_modelado_completa),]
 #----separar train y test----
@@ -42,7 +43,7 @@ train_completa <- base_modelado_completa[train_index$Resample1,]
 test_completa <- base_modelado_completa[-train_index$Resample1,]
 
 
-fit.rpart <- rpart(resultado_local ~ ., data = train_completa[,c(2:121,124)],control = rpart.control(minsplit = 5,minbucket = 2,cp=0.01,maxdepth = 20,split="gini"))
+fit.rpart <- rpart(resultado_local ~ ., data = train_completa[,c(2:121,124)],control = rpart.control(minsplit = 5,minbucket = 2,cp=0.01,maxdepth = 20,split="information"))
 
 rpart.plot(fit.rpart)
 
