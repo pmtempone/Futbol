@@ -87,3 +87,17 @@ WINDOW w AS (PARTITION BY equipo
              ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING);
              
              
+---
+
+SELECT even_id_evento, equipo,
+sum(case when resultado = 'V' then 1 
+else 0 end) OVER w as sum_victorias,
+sum(case when resultado = 'E' then 1 
+else 0 end) OVER w as sum_empates,
+sum(case when resultado = 'D' then 1 
+else 0 end) OVER w as sum_derrotas
+into fct_resultados_ult_partidos
+FROM   fct_resultados_equipos
+WINDOW w AS (PARTITION BY equipo
+             ORDER BY fct_resultados_equipos
+             ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING);
