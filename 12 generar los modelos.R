@@ -14,6 +14,7 @@ library(foreach)
 library(arules)
 library(ranger)
 
+
 #----generar base de modelado-----
 
 base_modelado_locales <- base_locales[,1:2] %>% left_join(avg_equipos_eventos,by=c("even_id_evento"="even_id_evento","equipo_local"="equipo")) %>%
@@ -25,8 +26,10 @@ base_modelado_completa <- base_modelado_locales %>% left_join(base_modelado_visi
 
 base_modelado_completa <- base_modelado_completa %>% left_join(lkp_eventos[,c("even_id_evento","fixt_local_goles","fixt_visitante_goles")],by="even_id_evento")
 
-base_modelado_completa <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles>fixt_visitante_goles,"V",
-                                                                                   ifelse(fixt_local_goles<fixt_visitante_goles,"D","E")))
+#base_modelado_completa <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles>fixt_visitante_goles,"V",
+#                                                                                   ifelse(fixt_local_goles<fixt_visitante_goles,"D","E")))
+
+base_modelado_completa <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles>fixt_visitante_goles,1,0))
 
 base_modelado_completa <- base_modelado_completa[complete.cases(base_modelado_completa),]
 #----separar train y test----
@@ -59,7 +62,7 @@ g
 
 #----ranger----
 
-archivo_salida  <- "salida_ranger_roc.txt"
+archivo_salida  <- "salida_ranger_roc_v2.txt"
 
 #escribo los  titulos  del archivo salida
 if( !file.exists( archivo_salida) )
@@ -89,4 +92,4 @@ for(  vnum.trees  in  c( 5, 10, 20, 50, 100, 200, 500, 800, 1000, 1500, 2000, 50
   
 }
 
-
+maximos <- apply(ranger.pred$predictions,1,FUN = max)
