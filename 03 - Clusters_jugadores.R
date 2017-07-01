@@ -1,4 +1,4 @@
-----#carga de librerias#-----
+#----#carga de librerias#-----
 
 library(FactoMineR)
 library(foreign)
@@ -15,9 +15,9 @@ suppressPackageStartupMessages(library(dplyr))
 library(broom)
 library(plotly)
 
------#a- cluster jerárquico-----
+#-----#a- cluster jerárquico-----
 
-matjugadores <- as.matrix(jugadores_agr[,c(23:36)])
+matjugadores <- as.matrix(jugadores_agr[,c(23:35)])
 #nombres <- iconv(jugadores_agr$jugador,to='ASCII//TRANSLIT') #por tildes en ubuntu
 nombres <- jugadores_agr$jugador
 rownames(matjugadores) <- nombres
@@ -32,7 +32,13 @@ jug.dend = dendlist("Cercano" = jug.clust.sin, "Lejano" = jug.clust.com, "Promed
 
 corrplot(cor.dendlist(jug.dend), "pie", "lower")
 
-plot(jug.clust.avg %>% set("branches_k_color", k=3) %>% set("branches_lwd", 2), main = "Average")
+# Define nodePar
+nodePar <- list(lab.cex = 0.6, pch = c(NA, 19), 
+                cex = 0.7)
+# Customized plot; remove labels
+plot(jug.clust.avg %>% set("branches_k_color", k=3), ylab = "Altura", nodePar = nodePar, leaflab = "none") 
+
+plot(jug.clust.avg %>% set("branches_k_color", k=3,xlab="", sub="") %>% set("branches_lwd", 2), main = "Average")
 jug3 <- cutree(jug.clust.com,5)
 jugadores_agr$clust <- factor(jug3)
 
@@ -51,7 +57,7 @@ Tabla <- cbind(Tabla,"promedio gral"=rep(colMeans(jugadores_agr[,c(23:36)]), eac
 
 Tabla
 
-----#b- Idem para un cluster no jerárquico.-----
+#----#b- Idem para un cluster no jerárquico.-----
 
 pca.jug <- PCA(jugadores_agr[,c(23:36)])
 PCA.1.2 = pca.jug$ind$coord[,c(1:2)]
@@ -89,3 +95,7 @@ subplot(ggdim2,ggdim3)
 
 multiplot(k4,k4_dim3)
 
+
+#----plot jugadores segun dimensiones de PCA----
+
+ggplot(data = PCA.1.2,aes(x=Dim.1,y=Dim.2))+geom_point()

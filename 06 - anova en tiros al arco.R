@@ -1,4 +1,4 @@
-----#librerias----
+#----#librerias----
 library(xtable)
 library(sqldf)
 library(corrplot)
@@ -30,7 +30,7 @@ library(dplyr)
 library(Rcmdr)
 options(scipen = 999)
 
-----#crear dataset con tiros de titulares y suplentes----
+#----#crear dataset con tiros de titulares y suplentes----
   
 jugadores_tiros =  jugadores_var %>% dplyr::select(jugador,J_local,pr_disparo_afuera)
 
@@ -40,7 +40,7 @@ jugadores_tiros <- as.data.frame(jugadores_tiros)
 jugadores_tiros <- jugadores_tiros[complete.cases(jugadores_tiros),]
 
 
-----#graficos de densidad----
+#----#graficos de densidad----
 
 ggplot() + geom_density(aes(x=L), colour="red", data=jugadores_tiros) + 
   geom_density(aes(x=V), colour="blue", data=jugadores_tiros)
@@ -52,10 +52,13 @@ jugadores_grafico <- sqldf("select * from jugadores_grafico where jugador in (se
 
 ggplot(jugadores_var %>% dplyr::select(jugador,J_local,pr_disparo_afuera),aes(x=pr_disparo_afuera, fill=J_local)) + geom_density(alpha=0.25)
 
+
+ggplot(jugadores_var %>% dplyr::select(jugador,J_local,pr_tiros),aes(x=pr_tiros, fill=J_local)) + geom_density(alpha=0.25)
+
 ggplot(data=jugadores_grafico,aes(x=J_local,y=pr_disparo_afuera,fill=J_local)) + geom_boxplot()
 
 
-----#Hipotesis-----
+#----#Hipotesis-----
 
 'Hipótesis nula:
 Los promedios de las tiros al arco de afuera de los jugadores son iguales tanto de visitante como de local.
@@ -122,7 +125,7 @@ ggplot(data = jugadores_var[jugadores_var$pr_goles_convertidos<0.08 & jugadores_
 
 
 
----#nueva interpretacion de variable disparos afuera----
+#---#nueva interpretacion de variable disparos afuera----
 
 
 jugadores_tiros_tot =  jugadores_var %>% dplyr::select(jugador,J_local,minutos_jugados,disparo_afuera,disparo_atajado,goles_convertidos) %>% mutate(pr_tiros=(disparo_afuera+disparo_atajado+goles_convertidos)/minutos_jugados)
@@ -143,7 +146,7 @@ ggplot(data = jugadores_var[jugadores_var$pr_goles_convertidos<0.08 & jugadores_
 
 wilc.jugadores
 
-----#graficos de densidad----
+#----#graficos de densidad----
 
 ggplot() + geom_density(aes(x=L), colour="red", data=jugadores_tiros_tot) + 
   geom_density(aes(x=V), colour="blue", data=jugadores_tiros_tot)
@@ -155,7 +158,7 @@ describeBy(jugadores_grafico_tot$pr_tiros, group = jugadores_grafico_tot$J_local
 lista <- as.data.frame(rownames(jugadores_tiros_tot))
 jugadores_grafico <- sqldf("select * from jugadores_grafico where jugador in (select * from lista)")
 
-ggplot(jugadores_grafico_tot,aes(x=pr_tiros, fill=J_local)) + geom_density(alpha=0.25)
+ggplot(jugadores_grafico_tot,aes(x=pr_tiros, fill=J_local)) + geom_density(alpha=0.25)+ylab("Densidad")+xlab('Promedio de Tiros al arco')+theme_tufte()+ guides(fill=guide_legend(title="Local o Visitante"))
 
-ggplot(data=jugadores_grafico_tot,aes(x=J_local,y=pr_tiros,fill=J_local)) + geom_boxplot()
+ggplot(data=jugadores_grafico_tot,aes(x=J_local,y=pr_tiros,fill=J_local)) + geom_boxplot()+theme_tufte()+ylab('Promedio de Tiros al arco')+xlab('Local o Visitante')+ guides(fill=FALSE)
 

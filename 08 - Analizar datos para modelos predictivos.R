@@ -26,7 +26,8 @@ quantile(Basetotal$pase_correcto, 0.99)
 
 #----#selecting variables----
 library(ggplot2)
-sv <- ggplot(Basetotal) + geom_boxplot(aes(x=titular, y=minutos_jugados, color=titular))
+sv <- ggplot(Basetotal) + geom_boxplot(aes(x=titular, y=minutos_jugados, color=titular))+ylab('Minutos jugados')+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                                                              panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 sv
 
@@ -37,6 +38,18 @@ cross_minutos=cross_plot(Basetotal, str_input="minutos_jugados", str_target="tit
 vars_to_analyze=c("torneo", "team.1", "rol_id_rol","pase_correcto")
 
 cross_plot(data=Basetotal, str_target="titular", str_input=vars_to_analyze)
+
+prop.rol.titular <- as.data.frame(prop.table(table(Basetotal$titular,Basetotal$rol_id_rol)))
+prop.rol.titular[prop.rol.titular$Freq==0,] <- NA
+prop.rol.titular <- prop.rol.titular[complete.cases(prop.rol.titular),]
+
+library(scales)
+ggplot(data = prop.rol.titular,aes(x=Var2,y=Freq))+geom_col(aes(y=Freq,fill=Var1),position="dodge")+
+  ylab('Proporcion sobre total de jugadores')+xlab("Rol de juego")+scale_x_discrete(labels=c("Arquero", "Defensor", "Mediocampista","Delantero"))+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+  panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+  scale_fill_discrete(name = "Titular")+scale_y_continuous(labels=scales::percent)
+
 
 
 

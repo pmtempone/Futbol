@@ -19,24 +19,25 @@ library(ggcorrplot)
 library(fmsb)
 options(scipen = 999)
 
------#correlacion entre variables----
+#-----#correlacion entre variables----
 
 dev.copy(png,'grafico10_corrplot.png')
+
 corrplot((cor(matjugadores,use="complete.obs")),method = "circle",type="upper")
 
 dev.off()
 
-
+library(ggthemes)
 ggcorrplot((cor(matjugadores,use="complete.obs")), hc.order = TRUE, 
            type = "lower", 
            lab = TRUE, 
            lab_size = 3, 
            method="circle", 
            colors = c("tomato2", "white", "springgreen3"), 
-           title="Correlogram of Players", 
-           ggtheme=theme_bw)
+           title="", 
+           ggtheme=theme_tufte)
 
----#star plot de habilidades----
+#---#star plot de habilidades----
 
 ggplot(matjugadores, aes(x = variable, y = value, colour = id, group = id)) +
   geom_line() +

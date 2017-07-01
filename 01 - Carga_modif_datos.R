@@ -76,7 +76,7 @@ summary(Basetotal)
 
 -----#transformacion datos----
 
-dat.m <- melt(Basetotal,id.vars='J_local', measure.vars=c("goles_convertidos","goles_encontra","asistencias","disparo_afuera","disparo_palo","disparo_atajado","penal_errado","faltas","offsides","amarillas","doble_amarilla","rojas","pase_correcto","pase_incorrecto","despejes","quites","atajadas","atajada_penal"))
+dat.m <- melt(Basetotal,id.vars='J_local', measure.vars=c("goles_convertidos","asistencias","disparo_afuera","disparo_palo","disparo_atajado","penal_errado","faltas","offsides","amarillas","doble_amarilla","rojas","pase_correcto","pase_incorrecto","despejes","quites","atajadas","atajada_penal"))
 
 ----#multboxplot----
 p <- ggplot(dat.m) + geom_boxplot(aes(x=J_local, y=value, color=variable))
@@ -101,9 +101,9 @@ l1 <- ggplot(Basetotal,aes(x=fecha,y=goles_convertidos))+geom_line()
 
 l1
 
-----#datos por jugador----
+#----#datos por jugador----
 
-jugadores <- Basetotal %>% select(perso_nombre.1,perso_apellido.1,minutos_jugados:atajada_penal)%>%group_by(perso_nombre.1,perso_apellido.1)
+jugadores <- Basetotal %>% dplyr::select(perso_nombre.1,perso_apellido.1,minutos_jugados:atajada_penal)%>%group_by(perso_nombre.1,perso_apellido.1)
 
 jugadores_agr <- jugadores %>%summarise_each(funs(sum))  
 

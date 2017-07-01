@@ -78,9 +78,9 @@ head(eigenvalues_equipos)
 
 pca.equipos <- PCA(matequipos,scale.unit=TRUE, ncp=5, graph=T,axes = c(1,2))
 
-fviz_screeplot(pca.equipos, ncp=14)
+fviz_screeplot(pca.equipos, ncp=14,title='')+theme_tufte()+xlab("Dimensiones")+ylab('Porcentaje de variación explicada')
 
-fviz_pca_var(pca.equipos, col.var="contrib") ##variables PCA con el color por contribucion
+fviz_pca_var(pca.equipos, col.var="contrib",title="")+theme_tufte() ##variables PCA con el color por contribucion
 
 fviz_pca_ind(pca.equipos,  label="none", habillage=res.hcpc$data.clust$clust,addEllipses=TRUE, ellipse.level=0.95) #jugadores por cluster
 
@@ -94,7 +94,7 @@ resequipos.hcpc
 
 resequipos.hcpc$desc.var$quanti.var
 
-fviz_pca_ind(pca.equipos,  label="none", habillage=resequipos.hcpc$data.clust$clust,addEllipses=TRUE, ellipse.level=0.95) #jugadores por cluster
+fviz_pca_ind(pca.equipos,title='', habillage=resequipos.hcpc$data.clust$clust,addEllipses=TRUE, ellipse.level=0.95,legend.title='Grupos') +theme_tufte() #equipos por cluster
 
 
 fviz_pca_biplot(pca.equipos, 
@@ -104,12 +104,19 @@ fviz_pca_biplot(pca.equipos,
   scale_color_brewer(palette="Dark2")+
   theme_minimal()
 
+d3 = dist(matequipos,method = "euclidean")
+
+equipos.clust.avg = as.dendrogram(hclust(d3, method = "average")) %>% set("branches_lwd", 2)
+
+plot(equipos.clust.avg %>% set("branches_k_color", k=2), ylab = "Altura", nodePar = nodePar, leaflab = "none") 
+
 
 #-----#4.3 caras de chernoff-------
 
 
 
-caras <- faces(equipos_tot_df[,c(22:35)],face.type=1,labels=equipos_tot_df$team.1)
+caras <- faces(equipos_tot_df[,c(22:35)],face.type=1,labels=equipos_tot_df$team.1,width=1)
 
+plot(caras)
 print(xtable(caras$info))
 

@@ -1,12 +1,12 @@
-----#carga librerias----
+#----#carga librerias----
 
 library(dplyr)
 
----#agrupar por equipo---
+#---#agrupar por equipo---
   
 #Idea_1: sumar valores y ponderarlos por 90 min. Que es la duracion de un partido.
   
-----#preparacion de datos----
+#----#preparacion de datos----
 
 equipos_tot <- Basetotal %>%  dplyr::select(fecha,team.1,minutos_jugados:atajada_penal) %>% group_by(fecha,team.1)
 
