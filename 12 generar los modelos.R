@@ -54,15 +54,15 @@ pred.rpart <- predict(fit.rpart,test_completa)
 
 pred.rpart.corte <- ifelse(pred.rpart>0.33,1,0)
 
-table(predicho=pred.rpart.corte,observador=test_completa$resultado_local)
+table(predicho=pred.rpart.corte[,2],observado=test_completa$resultado_local)
 
-g <- roc(resultado_local ~ pred.rpart.corte, data = test_completa)
+g <- roc(resultado_local ~ pred.rpart.corte[,2], data = test_completa)
 plot(g, col="red")
 g
 
 #----ranger----
 
-archivo_salida  <- "salida_ranger_roc_v2.txt"
+archivo_salida  <- "salida_ranger_roc_victorialocal_v2.txt"
 
 #escribo los  titulos  del archivo salida
 if( !file.exists( archivo_salida) )
@@ -93,3 +93,15 @@ for(  vnum.trees  in  c( 5, 10, 20, 50, 100, 200, 500, 800, 1000, 1500, 2000, 50
 }
 
 maximos <- apply(ranger.pred$predictions,1,FUN = max)
+
+ranger.fit_victoria  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred  = predict( ranger.fit,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+table(pred.ranger.corte,test_completa$resultado_local)
+
+import_ranger <- data.frame(importance(ranger.fit_victoria))
+#TODO revisar porque da una curva roc tan elevada
