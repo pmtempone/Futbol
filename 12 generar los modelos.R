@@ -62,7 +62,7 @@ g
 
 #----ranger----
 
-archivo_salida  <- "salida_ranger_roc_victorialocal_v2.txt"
+archivo_salida  <- "salida_ranger_roc_victorialocal_v3.txt"
 
 #escribo los  titulos  del archivo salida
 if( !file.exists( archivo_salida) )
@@ -95,7 +95,7 @@ for(  vnum.trees  in  c( 5, 10, 20, 50, 100, 200, 500, 800, 1000, 1500, 2000, 50
 maximos <- apply(ranger.pred$predictions,1,FUN = max)
 
 ranger.fit_victoria  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
-ranger.pred  = predict( ranger.fit,  test_completa)
+ranger.pred  = predict( ranger.fit_victoria,  test_completa)
 pred.ranger.corte <- ifelse(ranger.pred$predictions[,2]>0.5,1,0)
 g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
 plot(g)
@@ -105,3 +105,32 @@ table(pred.ranger.corte,test_completa$resultado_local)
 
 import_ranger <- data.frame(importance(ranger.fit_victoria))
 #TODO revisar porque da una curva roc tan elevada
+
+#-----modelo para derrota-----
+
+base_modelado_completa_derrota <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles<fixt_visitante_goles,0,1))
+
+base_modelado_completa_derrota <- base_modelado_completa_derrota[complete.cases(base_modelado_completa_derrota),]
+
+base_modelado_completa_derrota$equipo_local <- factor(base_modelado_completa_derrota$equipo_local)
+base_modelado_completa_derrota$equipo_visitante <- factor(base_modelado_completa_derrota$equipo_visitante)
+
+base_modelado_completa_derrota$resultado_local <- factor(base_modelado_completa_derrota$resultado_local)
+
+
+train_index <- caret::createDataPartition(base_modelado_completa_derrota$resultado_local,p=0.7)
+
+train_completa_derrota <- base_modelado_completa[train_index$Resample1,]
+test_completa_derrota <- base_modelado_completa[-train_index$Resample1,]
+
+
+ranger.fit_derrota  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred  = predict( ranger.fit_derrota,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+table(pred.ranger.corte,test_completa$resultado_local)
+
+import_ranger <- data.frame(importance(ranger.fit_victoria))
