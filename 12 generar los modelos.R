@@ -54,15 +54,15 @@ pred.rpart <- predict(fit.rpart,test_completa)
 
 pred.rpart.corte <- ifelse(pred.rpart>0.33,1,0)
 
-table(predicho=pred.rpart.corte,observador=test_completa$resultado_local)
+table(predicho=pred.rpart.corte[,2],observado=test_completa$resultado_local)
 
-g <- roc(resultado_local ~ pred.rpart.corte, data = test_completa)
+g <- roc(resultado_local ~ pred.rpart.corte[,2], data = test_completa)
 plot(g, col="red")
 g
 
 #----ranger----
 
-archivo_salida  <- "salida_ranger_roc_v2.txt"
+archivo_salida  <- "salida_ranger_roc_victorialocal_v3.txt"
 
 #escribo los  titulos  del archivo salida
 if( !file.exists( archivo_salida) )
@@ -93,3 +93,77 @@ for(  vnum.trees  in  c( 5, 10, 20, 50, 100, 200, 500, 800, 1000, 1500, 2000, 50
 }
 
 maximos <- apply(ranger.pred$predictions,1,FUN = max)
+
+ranger.fit_victoria  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred  = predict( ranger.fit_victoria,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+table(pred.ranger.corte,test_completa$resultado_local)
+
+import_ranger <- data.frame(importance(ranger.fit_victoria))
+
+#-----modelo para derrota-----
+
+base_modelado_completa_derrota <- base_modelado_completa %>% mutate(resultado_local=ifelse(fixt_local_goles<fixt_visitante_goles,0,1))
+
+base_modelado_completa_derrota <- base_modelado_completa_derrota[complete.cases(base_modelado_completa_derrota),]
+
+base_modelado_completa_derrota$equipo_local <- factor(base_modelado_completa_derrota$equipo_local)
+base_modelado_completa_derrota$equipo_visitante <- factor(base_modelado_completa_derrota$equipo_visitante)
+
+base_modelado_completa_derrota$resultado_local <- factor(base_modelado_completa_derrota$resultado_local)
+
+
+train_index <- caret::createDataPartition(base_modelado_completa_derrota$resultado_local,p=0.7)
+
+train_completa_derrota <- base_modelado_completa[train_index$Resample1,]
+test_completa_derrota <- base_modelado_completa[-train_index$Resample1,]
+
+
+ranger.fit_derrota  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred  = predict( ranger.fit_derrota,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+table(pred.ranger.corte,test_completa$resultado_local)
+
+import_ranger <- data.frame(importance(ranger.fit_victoria))
+
+
+#------con variables escaladas------ # Sun Sep 17 15:36:00 2017 ------------------------------
+
+ind <- sapply(base_modelado_completa_derrota, is.numeric)
+escalada_base <- base_modelado_completa_derrota
+escalada_base[ind] <- lapply(escalada_base[ind], scale)
+
+train_index <- caret::createDataPartition(escalada_base$resultado_local,p=0.7)
+
+train_completa_derrota <- escalada_base[train_index$Resample1,]
+test_completa_derrota <- escalada_base[-train_index$Resample1,]
+
+ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred.esc  = predict( ranger.fit_derrota.esc,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred.esc$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+table(pred.ranger.corte,test_completa$resultado_local)
+
+import_ranger.esc <- data.frame(importance(ranger.fit_derrota.esc))
+
+col.sel <- row.names(import_ranger.esc[which(import_ranger.esc$importance.ranger.fit_victoria.>1),])
+
+ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(row.names(import_ranger.esc[(import_ranger.esc>1)==TRUE,]),124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred.esc  = predict( ranger.fit_derrota.esc,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred.esc$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+
