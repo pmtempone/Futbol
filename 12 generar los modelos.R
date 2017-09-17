@@ -104,7 +104,6 @@ g
 table(pred.ranger.corte,test_completa$resultado_local)
 
 import_ranger <- data.frame(importance(ranger.fit_victoria))
-#TODO revisar porque da una curva roc tan elevada
 
 #-----modelo para derrota-----
 
@@ -134,3 +133,37 @@ g
 table(pred.ranger.corte,test_completa$resultado_local)
 
 import_ranger <- data.frame(importance(ranger.fit_victoria))
+
+
+#------con variables escaladas------ # Sun Sep 17 15:36:00 2017 ------------------------------
+
+ind <- sapply(base_modelado_completa_derrota, is.numeric)
+escalada_base <- base_modelado_completa_derrota
+escalada_base[ind] <- lapply(escalada_base[ind], scale)
+
+train_index <- caret::createDataPartition(escalada_base$resultado_local,p=0.7)
+
+train_completa_derrota <- escalada_base[train_index$Resample1,]
+test_completa_derrota <- escalada_base[-train_index$Resample1,]
+
+ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(2:121,124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred.esc  = predict( ranger.fit_derrota.esc,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred.esc$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+table(pred.ranger.corte,test_completa$resultado_local)
+
+import_ranger.esc <- data.frame(importance(ranger.fit_derrota.esc))
+
+col.sel <- row.names(import_ranger.esc[which(import_ranger.esc$importance.ranger.fit_victoria.>1),])
+
+ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(row.names(import_ranger.esc[(import_ranger.esc>1)==TRUE,]),124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.pred.esc  = predict( ranger.fit_derrota.esc,  test_completa)
+pred.ranger.corte <- ifelse(ranger.pred.esc$predictions[,2]>0.5,1,0)
+g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+plot(g)
+g
+
+
