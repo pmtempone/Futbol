@@ -159,11 +159,12 @@ import_ranger.esc <- data.frame(importance(ranger.fit_derrota.esc))
 
 col.sel <- row.names(import_ranger.esc[which(import_ranger.esc$importance.ranger.fit_victoria.>1),])
 
-ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(row.names(import_ranger.esc[(import_ranger.esc>1)==TRUE,]),124)] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
+ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(rownames(import_ranger.esc)[which(import_ranger.esc>1)],"resultado_local")] , num.trees=100,  min.node.size=20, probability=TRUE,importance = "impurity" )	
 ranger.pred.esc  = predict( ranger.fit_derrota.esc,  test_completa)
 pred.ranger.corte <- ifelse(ranger.pred.esc$predictions[,2]>0.5,1,0)
 g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
 plot(g)
 g
+
 
 
