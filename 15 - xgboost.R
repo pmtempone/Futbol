@@ -1,5 +1,6 @@
 library(xgboost)
 library(dplyr)
+library(pROC)
 
 base_xgboost <- escalada_base[ind]
 train_index <- caret::createDataPartition(escalada_base$resultado_local,p=0.7)
@@ -29,3 +30,25 @@ g
 
 importantes_ambiente <- xgb.importance(colnames(train_xgboost),model =xgb )
 cols <- importantes_ambiente %>% filter(Gain>=0.001) %>% select(Feature)
+
+xgb_final<-xgboost(data = as.matrix(train_xgboost[,cols$Feature]), 
+             label = as.matrix(train_completa$resultado_local), 
+             eta = 0.01, 
+             subsample = 0.7, 
+             colsample_bytree = 0.4, 
+             min_child_weight = 4, 
+             max_depth = 6,
+             alpha = 0, lambda = 0.1, gamma = 0.01,
+             nround= 4000, 
+             print_every_n = 100,
+             nthread = 4,
+             objective="binary:logistic"
+)
+
+pred_xgb_final <- predict(xgb_final, as.matrix(test_xgboost))
+pred_xgb.corte_final <- ifelse(pred_xgb_final>0.45,1,0)
+g <- roc(resultado_local ~ pred_xgb.corte_final, data = test_completa)
+plot(g)
+g
+
+
