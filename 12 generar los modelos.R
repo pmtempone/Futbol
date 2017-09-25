@@ -163,8 +163,15 @@ ranger.fit_derrota.esc  <- ranger(resultado_local ~ ., data = train_completa[,c(
 ranger.pred.esc  = predict( ranger.fit_derrota.esc,  test_completa)
 pred.ranger.corte <- ifelse(ranger.pred.esc$predictions[,2]>0.5,1,0)
 g <- roc(resultado_local ~ pred.ranger.corte, data = test_completa)
+
+#-----graficar dos modelos-----
 plot(g)
-g
+lines(g2,col='red')
+legend(0.2,0.4,c(paste("Ranger",round(g$auc,2)), paste("Xgboost",round(g2$auc,2))), 
+       col = c('black','red'),lty=c(1,1), # gives the legend appropriate symbols (lines)
+      lwd=c(2.5,2.5)) # gives the legend lines the correct color and width
+
+
 
 
 

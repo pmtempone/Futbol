@@ -47,8 +47,16 @@ xgb_final<-xgboost(data = as.matrix(train_xgboost[,cols$Feature]),
 
 pred_xgb_final <- predict(xgb_final, as.matrix(test_xgboost))
 pred_xgb.corte_final <- ifelse(pred_xgb_final>0.45,1,0)
-g <- roc(resultado_local ~ pred_xgb.corte_final, data = test_completa)
+g2 <- roc(resultado_local ~ pred_xgb.corte_final, data = test_completa)
 plot(g)
 g
+
+#------graficar 2 modelos----- # Sun Sep 24 21:47:23 2017 ------------------------------
+
+plot(g)
+lines(g2,col='red')
+legend(0.2,0.4,c(paste("Ranger",round(g$auc,2)), paste("Xgboost",round(g2$auc,2))), 
+       col = c('black','red'),lty=c(1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(2.5,2.5)) # gives the legend lines the correct color and width
 
 
