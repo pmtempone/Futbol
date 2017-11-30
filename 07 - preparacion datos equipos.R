@@ -1,4 +1,4 @@
-----##librerias-----
+#----##librerias-----
 
 library(xtable)
 library(sqldf)
@@ -30,6 +30,7 @@ library(dplyr)
 library(FactoMineR)
 library(factoextra)
 library("aplpack")
+library(ggthemes)
 
 options(scipen = 999)
 

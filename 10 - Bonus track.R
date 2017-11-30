@@ -35,25 +35,26 @@ library(fmsb)
 options(scipen = 999)
 
 
-----#star plot de jugadores----
+#----#star plot de jugadores----
 
 #subset jugadores videla, acuña, aued, gastón diaz, marcelo meli,pulpito gonzalez,vismara, cerro
 
-Jugadores_bonus <- jugadores_agr %>% filter(jugador %in% c("Meli,Cesar Marcelo","Videla,Ezequiel","Acuña,Marcos","Diaz,Ricardo Gaston","Aued,Luciano Roman","Gonzalez,Diego Hernan","Cerro,Francisco"))
+Jugadores_bonus <- jugadores_agr %>% filter(iconv(jugador,'latin1') %in% c("Meli,Cesar Marcelo","Videla,Ezequiel","Acuña,Marcos","Diaz,Ricardo Gaston","Aued,Luciano Roman","Gonzalez,Diego Hernan","Cerro,Francisco"))
 
 Jugadores_bonus <- Jugadores_bonus[,c(23:37)]
 
------#Meli---------
+#-----#Meli---------
 
 #MAX y min filas
 
 max_radar <- data.frame(max(Jugadores_bonus[,1]),max(Jugadores_bonus[,2]),max(Jugadores_bonus[,3]),max(Jugadores_bonus[,4]),max(Jugadores_bonus[,5]),
                         max(Jugadores_bonus[,6]),max(Jugadores_bonus[,7]),max(Jugadores_bonus[,8]),max(Jugadores_bonus[,9]),max(Jugadores_bonus[,10]),
-                        max(Jugadores_bonus[,11]),max(Jugadores_bonus[,12]),max(Jugadores_bonus[,13]),max(Jugadores_bonus[,14]))
+                        max(Jugadores_bonus[,11]),max(Jugadores_bonus[,12]),max(Jugadores_bonus[,13])) 
 
-colnames(max_radar) <- colnames(Jugadores_bonus[,1:14])
 
-Meli=rbind(max_radar, rep(0,14) , Jugadores_bonus[1,1:14])
+colnames(max_radar) <- colnames(Jugadores_bonus[,1:13])
+
+Meli=rbind(max_radar, rep(0,13) , Jugadores_bonus[1,1:13])
 
 
 # Custom the radarChart !
@@ -70,9 +71,9 @@ melichart <- radarchart( Meli  , axistype=1 ,
 )
 
 
------#Gonzalez--------
+#-----#Gonzalez--------
 
-Gonzalez=rbind(max_radar, rep(0,14) , Jugadores_bonus[2,1:14])
+Gonzalez=rbind(max_radar, rep(0,13) , Jugadores_bonus[2,1:13])
 
 
 # Custom the radarChart !
@@ -88,9 +89,9 @@ Gonzalez_chart <- radarchart( Gonzalez  , axistype=1 ,
             vlcex=0.8, title=Jugadores_bonus$jugador[2]
 )
 
------#Videla--------
+#-----#Videla--------
 
-Videla=rbind(max_radar, rep(0,14) , Jugadores_bonus[3,1:14])
+Videla=rbind(max_radar, rep(0,13) , Jugadores_bonus[3,1:13])
 
 
 # Custom the radarChart !
@@ -106,9 +107,9 @@ Videla_chart <- radarchart( Videla  , axistype=1 ,
             vlcex=0.8, title=Jugadores_bonus$jugador[3]
 )
 
------#Cerro--------
+#-----#Cerro--------
 
-Cerro=rbind(max_radar, rep(0,14) , Jugadores_bonus[4,1:14])
+Cerro=rbind(max_radar, rep(0,13) , Jugadores_bonus[4,1:13])
 
 
 # Custom the radarChart !
@@ -125,9 +126,9 @@ Cerro_chart <- radarchart( Cerro  , axistype=1 ,
 )
 
 
------#Aued--------
+#-----#Aued--------
 
-Aued=rbind(max_radar, rep(0,14) , Jugadores_bonus[5,1:14])
+Aued=rbind(max_radar, rep(0,13) , Jugadores_bonus[5,1:13])
 
 
 # Custom the radarChart !
@@ -144,9 +145,9 @@ Aued_chart <- radarchart( Aued  , axistype=1 ,
 )
 
 
------#Acuña--------
+#-----#Acuña--------
 
-Acuña=rbind(max_radar, rep(0,14) , Jugadores_bonus[6,1:14])
+Acuña=rbind(max_radar, rep(0,13) , Jugadores_bonus[6,1:13])
 
 
 # Custom the radarChart !
@@ -162,9 +163,9 @@ Acuna_chart <- radarchart( Acuña  , axistype=1 ,
             vlcex=0.8, title=Jugadores_bonus$jugador[6]
 )
 
------#Diaz--------
+#-----#Diaz--------
 
-Diaz=rbind(max_radar, rep(0,14) , Jugadores_bonus[7,1:14])
+Diaz=rbind(max_radar, rep(0,13) , Jugadores_bonus[7,1:13])
 
 
 # Custom the radarChart !
@@ -180,11 +181,11 @@ Diaz_chart <- radarchart( Diaz  , axistype=1 ,
             vlcex=0.8, title=Jugadores_bonus$jugador[7]
 )
 
------#todos los graficos juntos----
+#-----#todos los graficos juntos----
 
 par(mfrow=c(4,2)) 
 par(mfrow=c(1,1)) 
 
----#chernoff jugadores----
+#---#chernoff jugadores----
 
-faces(Jugadores_bonus[,c(1:14)],face.type=1,labels=Jugadores_bonus$jugador)
+faces(Jugadores_bonus[,c(1:13)],face.type=1,labels=Jugadores_bonus$jugador)
